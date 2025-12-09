@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Citoyens;
+namespace App\Filament\Resources;
 
 use App\Filament\Resources\Citoyens\Pages\CreateCitoyen;
 use App\Filament\Resources\Citoyens\Pages\EditCitoyen;

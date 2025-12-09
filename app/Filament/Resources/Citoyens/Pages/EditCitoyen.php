@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Citoyens\Pages;
 
-use App\Filament\Resources\Citoyens\CitoyenResource;
+use App\Filament\Resources\CitoyenResource;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
