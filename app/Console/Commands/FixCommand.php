@@ -12,7 +12,7 @@ class FixCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'app:fix-command';
+    protected $signature = 'app:fix-command {uid}';
 
     /**
      * The console command description.
@@ -37,10 +37,12 @@ class FixCommand extends Command
             dump($e);
             $citoyens = [];
         }
-        echo count($citoyens);
-        dump($citoyens);
         foreach ($citoyens as $citoyen) {
             $this->line($citoyen->getFirstAttribute('mail'));
         }
+
+        $uid = $this->argument('uid');
+        $entry = $this->ldapCitoyenRepository->getEntry($uid);
+        dump($entry);
     }
 }
