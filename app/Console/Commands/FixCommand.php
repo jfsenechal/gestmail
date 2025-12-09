@@ -55,14 +55,16 @@ class FixCommand extends Command
         }
 
         if ($uid) {
-            $entry = $this->ldapCitoyenRepository->getEntry($uid);
+            try {
+                $entry = $this->ldapCitoyenRepository->getEntry($uid);
+            } catch (\Exception $e) {
+                  $this->error($e->getMessage());
+            }
             if ($password) {
                 try {
                     $this->line('Try change password ');
                     $this->ldapCitoyenRepository->changePassword($entry, $password);
-                } catch (ModelDoesNotExistException $e) {
-                    $this->error($e->getMessage());
-                } catch (LdapRecordException $e) {
+                } catch (ModelDoesNotExistException|LdapRecordException $e) {
                     $this->error($e->getMessage());
                 }
             }

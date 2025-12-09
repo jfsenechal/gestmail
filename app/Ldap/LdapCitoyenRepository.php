@@ -2,6 +2,7 @@
 
 namespace App\Ldap;
 
+use App\Models\EmailDto;
 use LdapRecord\Auth\BindException;
 use LdapRecord\Configuration\DomainConfiguration;
 use LdapRecord\Connection;
@@ -144,7 +145,7 @@ class LdapCitoyenRepository
         $lastUidNumber = $this->getLastUidNumberCitoyen();
         $homeDirectory = $this->sieveRoot.$firstLetter.'/'.$uid;
 
-        $citoyenModel = new Citoyen();
+        $citoyenModel = new CitoyenLdap();
         $data = $citoyenModel->getData(
             $uid,
             $emailCitoyen->sn,
