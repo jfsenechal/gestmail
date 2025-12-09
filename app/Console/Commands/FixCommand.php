@@ -14,7 +14,7 @@ class FixCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'app:fix-command {uid} {password}';
+    protected $signature = 'app:fix-command {uid?} {password?}';
 
     /**
      * The console command description.
