@@ -32,9 +32,13 @@ class FixCommand extends Command
     public function handle(): void
     {
         try {
-            $this->ldapCitoyenRepository->connect();
+            $citoyens = $this->ldapCitoyenRepository->getAll();
         } catch (\Exception $e) {
             dump($e);
+            $citoyens = [];
+        }
+        foreach ($citoyens as $citoyen) {
+            $this->line($citoyen->getFirstAttribute('mail'));
         }
     }
 }
