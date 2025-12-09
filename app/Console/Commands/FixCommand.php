@@ -31,19 +31,28 @@ class FixCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle(): void
+    public function handle(): int
     {
+        $uid = $this->argument('uid') ?? null;
+        $password = $this->argument('password') ?? null;
+
         try {
-            $citoyens = $this->ldapCitoyenRepository->getAll();
+            $citoyens = $this->ldapCitoyenRepository->search($uid);
         } catch (\Exception $e) {
-            $this->error($e->getMessage());
             $citoyens = [];
+            $this->error($e->getMessage());
         }
+
+        if (count($citoyens) === 0) {
+            $this->line('not found'.$uid);
+
+            return \Symfony\Component\Console\Command\Command::FAILURE;
+        }
+
         foreach ($citoyens as $citoyen) {
             $this->line($citoyen->getFirstAttribute('mail'));
         }
-        $uid = $this->argument('uid') ?? null;
-        $password = $this->argument('password') ?? null;
+
         if ($uid) {
             $entry = $this->ldapCitoyenRepository->getEntry($uid);
             if ($password) {
@@ -57,5 +66,6 @@ class FixCommand extends Command
             }
         }
 
+        return \Symfony\Component\Console\Command\Command::SUCCESS;
     }
 }
