@@ -38,6 +38,7 @@ class LdapCitoyenRepository
             'follow_referrals' => false,
         ]);
 
+        dump($domain);
         $this->connection = new Connection($domain);
     }
 
