@@ -10,9 +10,12 @@ class CitoyenLdap extends Model
      * The object classes of the LDAP model.
      */
     public static array $objectClasses = [
+        'gosaAccount',
+        'gosaMailAccount',
         'top',
         'person',
-        'organizationalperson',
-        'user',
+        'organizationalPerson',
+        'inetOrgPerson',
+        'posixAccount',
     ];
 }
