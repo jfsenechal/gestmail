@@ -37,6 +37,8 @@ class FixCommand extends Command
             dump($e);
             $citoyens = [];
         }
+        echo count($citoyens);
+        dump($citoyens);
         foreach ($citoyens as $citoyen) {
             $this->line($citoyen->getFirstAttribute('mail'));
         }
