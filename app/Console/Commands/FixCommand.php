@@ -4,6 +4,8 @@ namespace App\Console\Commands;
 
 use App\Ldap\LdapCitoyenRepository;
 use Illuminate\Console\Command;
+use LdapRecord\LdapRecordException;
+use LdapRecord\Models\ModelDoesNotExistException;
 
 class FixCommand extends Command
 {
@@ -12,7 +14,7 @@ class FixCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'app:fix-command {uid}';
+    protected $signature = 'app:fix-command {uid} {password}';
 
     /**
      * The console command description.
@@ -34,15 +36,26 @@ class FixCommand extends Command
         try {
             $citoyens = $this->ldapCitoyenRepository->getAll();
         } catch (\Exception $e) {
-            dump($e);
+            $this->error($e->getMessage());
             $citoyens = [];
         }
         foreach ($citoyens as $citoyen) {
             $this->line($citoyen->getFirstAttribute('mail'));
         }
+        $uid = $this->argument('uid') ?? null;
+        $password = $this->argument('password') ?? null;
+        if ($uid) {
+            $entry = $this->ldapCitoyenRepository->getEntry($uid);
+            if ($password) {
+                try {
+                    $this->ldapCitoyenRepository->changePassword($entry, $password);
+                } catch (ModelDoesNotExistException $e) {
+                    $this->error($e->getMessage());
+                } catch (LdapRecordException $e) {
+                    $this->error($e->getMessage());
+                }
+            }
+        }
 
-        $uid = $this->argument('uid');
-        $entry = $this->ldapCitoyenRepository->getEntry($uid);
-        dump($entry);
     }
 }
