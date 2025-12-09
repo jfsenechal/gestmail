@@ -56,7 +56,6 @@ class LdapCitoyenRepository
             try {
                 $this->connection->connect();
             } catch (BindException|LdapRecordException  $exception) {
-
                 throw new \Exception('Citoyen connection failed: '.$exception->getMessage().
                     ' '.$this->connection->getConfiguration()->get('hosts')[0]);
             }

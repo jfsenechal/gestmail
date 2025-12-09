@@ -29,8 +29,12 @@ class FixCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
-        $this->ldapCitoyenRepository->getAll();
+        try {
+            $this->ldapCitoyenRepository->connect();
+        } catch (\Exception $e) {
+            dump($e);
+        }
     }
 }
