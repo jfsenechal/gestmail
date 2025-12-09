@@ -18,4 +18,13 @@ class CitoyenLdap extends Model
         'inetOrgPerson',
         'posixAccount',
     ];
+
+    public static function cryptPassword(string $password): string
+    {
+        $salt = substr(sha1(uniqid(random_int(0, mt_getrandmax()), true), true), 0, 4);
+        $rawHash = sha1($password.$salt, true).$salt;
+        $method = '{SSHA}';
+
+        return $method.base64_encode($rawHash);
+    }
 }

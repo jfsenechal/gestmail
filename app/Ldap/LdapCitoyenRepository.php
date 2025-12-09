@@ -228,7 +228,7 @@ class LdapCitoyenRepository
      */
     public function changePassword(Model $model, string $clearPassword): void
     {
-        $model->setAttribute('userPassword', [Citoyen::cryptPassword($clearPassword)]);
+        $model->setAttribute('userPassword', [CitoyenLdap::cryptPassword($clearPassword)]);
         $this->connect();
         $model->update();
     }
