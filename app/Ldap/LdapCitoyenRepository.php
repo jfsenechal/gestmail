@@ -11,6 +11,7 @@ use LdapRecord\LdapRecordException;
 use LdapRecord\Models\Model;
 use LdapRecord\Models\ModelDoesNotExistException;
 use LdapRecord\Query\Collection;
+use App\Ldap\CitoyenLdap;
 
 class LdapCitoyenRepository
 {
@@ -70,7 +71,7 @@ class LdapCitoyenRepository
     {
         $this->connect();
 
-        return Citoyen::get();
+        return CitoyenLdap::get();
     }
 
     /**
@@ -82,7 +83,7 @@ class LdapCitoyenRepository
     {
         $this->connect();
 
-        return Citoyen::query()->findBy('uid', $uid);
+        return CitoyenLdap::query()->findBy('uid', $uid);
     }
 
     /**
@@ -94,7 +95,7 @@ class LdapCitoyenRepository
     {
         $this->connect();
 
-        return Citoyen::query()
+        return CitoyenLdap::query()
             ->orwhere('gosaMailAlternateAddress', '=', $nom)
             ->orWhere('mail', '=', $nom)
             ->orWhere('uid', '=', $nom)
@@ -112,7 +113,7 @@ class LdapCitoyenRepository
     {
         $this->connect();
 
-        return Citoyen::query()
+        return CitoyenLdap::query()
             ->orWhere('uid', 'contains', $nom)
             ->orWhere('mail', 'contains', $nom)
             ->orWhere('gosaMailForwardingAddress', 'contains', $nom)
@@ -134,10 +135,10 @@ class LdapCitoyenRepository
 
     /**
      * @param EmailDto $emailCitoyen
-     * @return Citoyen
+     * @return CitoyenLdap
      * @throws LdapRecordException
      */
-    public function createCitoyen(EmailDto $emailCitoyen): Citoyen
+    public function createCitoyen(EmailDto $emailCitoyen): CitoyenLdap
     {
         [$uid, $domain] = explode('@', $emailCitoyen->mail);
         $firstLetter = substr($uid, 0, 1);
