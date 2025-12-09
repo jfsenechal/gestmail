@@ -26,7 +26,7 @@ class LdapCitoyenRepository
         $domain = new DomainConfiguration([
             'hosts' => [$host ?? config('ldap.citoyen.host')],
             'base_dn' => $dn ?? config('ldap.citoyen.base_dn'),
-            'username' => $dn ?? config('ldap.citoyen.user'),
+            'username' => $dn ?? config('ldap.citoyen.username'),
             'password' => $dn ?? config('ldap.citoyen.password'),
             'port' => LdapInterface::PORT,
             'protocol' => 'ldap://',
@@ -38,7 +38,6 @@ class LdapCitoyenRepository
             'follow_referrals' => false,
         ]);
 
-        dump($domain);
         $this->connection = new Connection($domain);
     }
 
