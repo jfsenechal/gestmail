@@ -49,6 +49,7 @@ class FixCommand extends Command
             return \Symfony\Component\Console\Command\Command::FAILURE;
         }
 
+        $this->line('Found '.count($citoyens));
         foreach ($citoyens as $citoyen) {
             $this->line($citoyen->getFirstAttribute('mail'));
         }
@@ -57,6 +58,7 @@ class FixCommand extends Command
             $entry = $this->ldapCitoyenRepository->getEntry($uid);
             if ($password) {
                 try {
+                    $this->line('Try change password ');
                     $this->ldapCitoyenRepository->changePassword($entry, $password);
                 } catch (ModelDoesNotExistException $e) {
                     $this->error($e->getMessage());
