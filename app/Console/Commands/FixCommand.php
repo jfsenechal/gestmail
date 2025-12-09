@@ -39,7 +39,7 @@ class FixCommand extends Command
         }
         echo count($citoyens);
         dump($citoyens);
-        foreach ($citoyens->items as $citoyen) {
+        foreach ($citoyens as $citoyen) {
             $this->line($citoyen->getFirstAttribute('mail'));
         }
     }
