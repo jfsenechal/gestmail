@@ -11,7 +11,6 @@ use LdapRecord\LdapRecordException;
 use LdapRecord\Models\Model;
 use LdapRecord\Models\ModelDoesNotExistException;
 use LdapRecord\Query\Collection;
-use App\Ldap\CitoyenLdap;
 
 class LdapCitoyenRepository
 {
@@ -30,7 +29,7 @@ class LdapCitoyenRepository
             'username' => $dn ?? config('ldap.citoyen.user'),
             'password' => $dn ?? config('ldap.citoyen.password'),
             'port' => LdapInterface::PORT_SSL,
-            'protocol' => 'ldaps://',
+            'protocol' => 'ldap://',
             'use_ssl' => true,
             'use_tls' => false,
             'use_sasl' => false,
