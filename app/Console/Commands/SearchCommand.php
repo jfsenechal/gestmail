@@ -37,8 +37,9 @@ class SearchCommand extends Command
             try {
                 $citizens = $this->ldapCitoyenRepository->search($uid);
             } catch (\Exception $e) {
-                $citizens = [];
                 $this->error($e->getMessage());
+
+                return \Symfony\Component\Console\Command\Command::FAILURE;
             }
 
             if (count($citizens) === 0) {
