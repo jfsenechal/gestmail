@@ -3,7 +3,6 @@
 namespace App\Ldap;
 
 use App\Models\EmailDto;
-use Illuminate\Http\Request;
 use LdapRecord\Auth\BindException;
 use LdapRecord\Configuration\DomainConfiguration;
 use LdapRecord\Connection;
@@ -17,6 +16,7 @@ use LdapRecord\Query\Collection;
 class LdapCitoyenRepository
 {
     public readonly Connection $connection;
+
     public string $sieveRoot = '/var/spool/dovecot/mail/';
 
     public function __construct(
@@ -42,13 +42,12 @@ class LdapCitoyenRepository
     }
 
     /**
-     * @return void
      * @throws \Exception
      */
     public function connect(): void
     {
-        if (!$this->connection->isConnected()) {
-            if (!Container::hasConnection('default')) {
+        if (! $this->connection->isConnected()) {
+            if (! Container::hasConnection('default')) {
                 Container::addConnection($this->connection);
             }
 
@@ -65,6 +64,7 @@ class LdapCitoyenRepository
 
     /**
      * @return Collection<Model>
+     *
      * @throws \Exception
      */
     public function getAll(): Collection
@@ -75,8 +75,6 @@ class LdapCitoyenRepository
     }
 
     /**
-     * @param string $uid
-     * @return Model|null
      * @throws \Exception
      */
     public function getEntry(string $uid): ?Model
@@ -85,10 +83,19 @@ class LdapCitoyenRepository
 
         return CitoyenLdap::query()->findBy('uid', $uid);
     }
+    /**
+     * @throws \Exception
+     */
+    public function getEntryByEmail(string $email): ?Model
+    {
+        $this->connect();
+
+        return CitoyenLdap::query()->findBy('mail', $email);
+    }
 
     /**
-     * @param string $nom
      * @return Collection|Model[]
+     *
      * @throws \Exception
      */
     public function checkExist(string $nom): Collection
@@ -105,8 +112,8 @@ class LdapCitoyenRepository
     }
 
     /**
-     * @param string $nom
      * @return Collection|array|Model[]
+     *
      * @throws \Exception
      */
     public function search(string $nom): Collection|array
@@ -121,7 +128,6 @@ class LdapCitoyenRepository
     }
 
     /**
-     * @return int
      * @throws \Exception
      */
     public function getLastUidNumberCitoyen(): int
@@ -129,13 +135,11 @@ class LdapCitoyenRepository
         $this->connect();
 
         return $this->getAll()
-            ->map(fn($entry) => (int)$entry->getFirstAttribute('uidNumber'))
+            ->map(fn ($entry) => (int) $entry->getFirstAttribute('uidNumber'))
             ->max();
     }
 
     /**
-     * @param EmailDto $emailCitoyen
-     * @return CitoyenLdap
      * @throws LdapRecordException
      * @throws \Exception
      */
@@ -159,30 +163,26 @@ class LdapCitoyenRepository
             $homeDirectory,
             $emailCitoyen->employeeNumber,
             $lastUidNumber,
-            250
+            $emailCitoyen->gosaMailQuota,
         );
-        $dn = "uid=".$data['uid'][0].",".$this->connection->getConfiguration()->get('base_dn');
+        $dn = 'uid='.$data['uid'][0].','.$this->connection->getConfiguration()->get('base_dn');
 
         $citoyenModel = new CitoyenLdap($data);
         $citoyenModel->setDn($dn);
 
-        //$citoyenModel->save();
+        // $citoyenModel->save();
         dump($citoyenModel);
 
         return $citoyenModel;
     }
 
     /**
-     * @param Model $model
-     * @param EmailDto $original
-     * @param EmailDto $emailDto
-     * @return void
      * @throws LdapRecordException
      * @throws \Exception
      */
     public function update(Model $model, EmailDto $original, EmailDto $emailDto): void
     {
-        $diff = array_diff_assoc((array)$emailDto, (array)$original);
+        $diff = array_diff_assoc((array) $emailDto, (array) $original);
         if (count($diff) > 0) {
             foreach ($diff as $key => $value) {
                 $model->setAttribute($key, $value);
@@ -193,9 +193,6 @@ class LdapCitoyenRepository
     }
 
     /**
-     * @param Model $model
-     * @param iterable $alias
-     * @return void
      * @throws LdapRecordException
      * @throws ModelDoesNotExistException
      * @throws \Exception
@@ -208,9 +205,6 @@ class LdapCitoyenRepository
     }
 
     /**
-     * @param Model $model
-     * @param int $quota
-     * @return void
      * @throws LdapRecordException
      * @throws \LdapRecord\Models\ModelDoesNotExistException
      * @throws \Exception
@@ -223,9 +217,6 @@ class LdapCitoyenRepository
     }
 
     /**
-     * @param Model $model
-     * @param string $clearPassword
-     * @return void
      * @throws LdapRecordException
      * @throws \LdapRecord\Models\ModelDoesNotExistException
      * @throws \Exception
@@ -238,9 +229,6 @@ class LdapCitoyenRepository
     }
 
     /**
-     * @param Model $model
-     * @param string $cryptedPassword
-     * @return void
      * @throws LdapRecordException
      * @throws \LdapRecord\Models\ModelDoesNotExistException
      * @throws \Exception
@@ -253,8 +241,6 @@ class LdapCitoyenRepository
     }
 
     /**
-     * @param string $uid
-     * @return void
      * @throws LdapRecordException
      * @throws \LdapRecord\Models\ModelDoesNotExistException
      * @throws \Exception
@@ -266,8 +252,7 @@ class LdapCitoyenRepository
     }
 
     /**
-     * @param string $mail
-     *
+     * @param  string  $mail
      * @return []
      */
     public function checkMailExist($mail, $list = false): array|bool
@@ -322,9 +307,8 @@ class LdapCitoyenRepository
     /**
      * Retourne tous les mail d'un tableau de entries.
      *
-     * @param Model[] $entries
-     * @param bool $getAlternates
-     *
+     * @param  Model[]  $entries
+     * @param  bool  $getAlternates
      * @return []
      */
     public function getAllEmails(iterable $entries, $getAlternates = true, $server = 'mail'): array
@@ -339,7 +323,7 @@ class LdapCitoyenRepository
             }
 
             if ($getAlternates) {
-                if ('mail' === $server) {
+                if ($server === 'mail') {
                     $alternates = $entry->getFirstAttribute('proxyAddresses', []);
                 } else {
                     $alternates = $entry->getFirstAttribute('gosaMailAlternateAddress', []);
