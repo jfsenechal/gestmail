@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-GestMail is a Laravel 12 application for managing email accounts via LDAP. It provides a Filament 4 admin panel for managing citizen email accounts (citoyens) stored in an LDAP directory.
+GestMail is a Laravel 12 application for managing email accounts via LDAP. It provides a Filament 4 admin panel for managing citizen email accounts (citizens) stored in an LDAP directory.
 
 ## Development Commands
 
@@ -33,7 +33,7 @@ npm run dev
 
 ### LDAP Integration
 - Uses `directorytree/ldaprecord` for LDAP operations
-- `app/Ldap/LdapRepository.php` - Main repository for LDAP operations (connect, search, create, update citoyens)
+- `app/Ldap/LdapRepository.php` - Main repository for LDAP operations (connect, search, create, update citizens)
 - LDAP configuration via environment variables: `LDAP_CITOYEN_URL`, `LDAP_CITOYEN_BASE`, `LDAP_CITOYEN_ADMIN`, `LDAP_CITOYEN_PWD`
 - GOsa mail attributes: `gosaMailAlternateAddress`, `gosaMailForwardingAddress`, `gosaMailQuota`
 
