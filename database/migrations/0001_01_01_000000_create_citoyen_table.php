@@ -22,6 +22,13 @@ return new class extends Migration
             $table->string('password');
             $table->timestamps();
         });
+
+        Schema::create('hands', function (Blueprint $table) {
+            $table->id();
+            $table->string('uid')->unique();
+            $table->string('password');
+            $table->timestamps();
+        });
     }
 
     /**
