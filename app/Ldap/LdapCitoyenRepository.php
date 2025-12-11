@@ -170,8 +170,7 @@ class LdapCitoyenRepository
         $citoyenModel = new CitoyenLdap($data);
         $citoyenModel->setDn($dn);
 
-        // $citoyenModel->save();
-        dump($citoyenModel);
+        $citoyenModel->save();
 
         return $citoyenModel;
     }
