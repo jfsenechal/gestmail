@@ -68,6 +68,7 @@ class CreateCommand extends Command
 
         $emailDto->postalCode = text(
             label: $labels['postalCode'],
+            default: 6900,
             required: true
         );
 
