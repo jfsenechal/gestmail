@@ -51,13 +51,13 @@ class CreateCommand extends Command
             'description' => 'Description',
         ];
 
-        $emailDto->sn = text(
-            label: $labels['sn'],
+        $emailDto->givenName = text(
+            label: $labels['givenName'],
             required: true
         );
 
-        $emailDto->givenName = text(
-            label: $labels['givenName'],
+        $emailDto->sn = text(
+            label: $labels['sn'],
             required: true
         );
 
@@ -77,9 +77,11 @@ class CreateCommand extends Command
             required: true
         );
 
+        $suggestedEmail = $this->suggestEmail($emailDto->givenName, $emailDto->sn);
+
         $mail = text(
             label: $labels['mail'],
-            placeholder: 'prenom.nom@marche.be',
+            default: $suggestedEmail,
             required: true,
             validate: fn (string $value) => filter_var($value, FILTER_VALIDATE_EMAIL)
                 ? null
@@ -135,5 +137,34 @@ class CreateCommand extends Command
         }
 
         return \Symfony\Component\Console\Command\Command::SUCCESS;
+    }
+
+    /**
+     * Suggest an email address based on givenName and sn.
+     */
+    private function suggestEmail(string $givenName, string $sn): string
+    {
+        $localPart = $this->sanitizeForEmail($givenName).'.'.$this->sanitizeForEmail($sn);
+
+        return $localPart.'@marche.be';
+    }
+
+    /**
+     * Sanitize a string for use in email local part (RFC 3696 compliant).
+     */
+    private function sanitizeForEmail(string $value): string
+    {
+        $value = mb_strtolower($value);
+
+        $transliterator = \Transliterator::create('NFD; [:Nonspacing Mark:] Remove; NFC');
+        if ($transliterator) {
+            $value = $transliterator->transliterate($value);
+        }
+
+        $value = preg_replace('/[^a-z0-9._-]/', '', $value);
+
+        $value = preg_replace('/\.{2,}/', '.', $value);
+
+        return trim($value, '.-');
     }
 }
