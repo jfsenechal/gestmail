@@ -27,7 +27,7 @@ class CitoyenLdap extends Model
     public string $uid;
     public array $attributes = [];
 
-    public function getData(
+    public static function convertDataToLdapSchema(
         string $uid,
         string $first_name,
         string $last_name,

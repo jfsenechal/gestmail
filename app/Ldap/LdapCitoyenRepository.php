@@ -3,6 +3,7 @@
 namespace App\Ldap;
 
 use App\Models\EmailDto;
+use Illuminate\Http\Request;
 use LdapRecord\Auth\BindException;
 use LdapRecord\Configuration\DomainConfiguration;
 use LdapRecord\Connection;
@@ -16,14 +17,12 @@ use LdapRecord\Query\Collection;
 class LdapCitoyenRepository
 {
     public readonly Connection $connection;
+    public string $sieveRoot = '/var/spool/dovecot/mail/';
 
     public function __construct(
         ?string $host = null,
         ?string $dn = null,
-        ?string $user = null,
-        ?string $password = null,
     ) {
-
         $domain = new DomainConfiguration([
             'hosts' => [$host ?? config('ldap.citoyen.host')],
             'base_dn' => $dn ?? config('ldap.citoyen.base_dn'),
@@ -56,8 +55,10 @@ class LdapCitoyenRepository
             try {
                 $this->connection->connect();
             } catch (BindException|LdapRecordException  $exception) {
-                throw new \Exception('Citoyen connection failed: '.$exception->getMessage().
-                    ' '.$this->connection->getConfiguration()->get('hosts')[0]);
+                throw new \Exception(
+                    'Citoyen connection failed: '.$exception->getMessage().
+                    ' '.$this->connection->getConfiguration()->get('hosts')[0]
+                );
             }
         }
     }
@@ -136,8 +137,9 @@ class LdapCitoyenRepository
      * @param EmailDto $emailCitoyen
      * @return CitoyenLdap
      * @throws LdapRecordException
+     * @throws \Exception
      */
-    public function createCitoyen(EmailDto $emailCitoyen): CitoyenLdap
+    public function createCitizen(EmailDto $emailCitoyen): CitoyenLdap
     {
         [$uid, $domain] = explode('@', $emailCitoyen->mail);
         $firstLetter = substr($uid, 0, 1);
@@ -145,8 +147,7 @@ class LdapCitoyenRepository
         $lastUidNumber = $this->getLastUidNumberCitoyen();
         $homeDirectory = $this->sieveRoot.$firstLetter.'/'.$uid;
 
-        $citoyenModel = new CitoyenLdap();
-        $data = $citoyenModel->getData(
+        $data = CitoyenLdap::convertDataToLdapSchema(
             $uid,
             $emailCitoyen->sn,
             $emailCitoyen->givenName,
@@ -160,11 +161,13 @@ class LdapCitoyenRepository
             $lastUidNumber,
             250
         );
-        $dn = "uid=".$data['uid'][0].",".$this->dn;
+        $dn = "uid=".$data['uid'][0].",".$this->connection->getConfiguration()->get('base_dn');
 
-        $citoyenModel = new Citoyen($data);
+        $citoyenModel = new CitoyenLdap($data);
         $citoyenModel->setDn($dn);
-        $citoyenModel->save();
+
+        //$citoyenModel->save();
+        dump($citoyenModel);
 
         return $citoyenModel;
     }
@@ -261,6 +264,7 @@ class LdapCitoyenRepository
         $entry = $this->getEntry($uid);
         $entry->delete();
     }
+
     /**
      * @param string $mail
      *

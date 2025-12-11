@@ -103,7 +103,7 @@ class CreateCommand extends Command
         );
 
         try {
-            $emailCitoyen = $this->ldapCitoyenRepository->createCitoyen($emailDto);
+            $emailCitoyen = $this->ldapCitoyenRepository->createCitizen($emailDto);
             $this->info('Le citoyen a bien été ajouté.');
 
             $this->newLine();
