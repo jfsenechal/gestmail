@@ -74,6 +74,11 @@ class DeleteCommand extends Command
         try {
             $this->ldapCitoyenRepository->delete($uid);
             $this->info("Le compte {$uid} a été supprimé avec succès.");
+
+            $attribute = $citizen->getAttribute('homeDirectory');
+            $chemin = (string)$attribute[0];
+            $this->info("Le dossier imap peut être supprimé avec la commande rm -rI {$chemin}.");
+
         } catch (\Exception|LdapRecordException $exception) {
             $error = $exception->getMessage();
             if ($exception instanceof LdapRecordException) {
