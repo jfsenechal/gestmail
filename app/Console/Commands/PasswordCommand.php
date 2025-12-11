@@ -4,6 +4,8 @@ namespace App\Console\Commands;
 
 use App\Ldap\LdapCitoyenRepository;
 use Illuminate\Console\Command;
+use LdapRecord\LdapRecordException;
+use LdapRecord\Models\ModelDoesNotExistException;
 
 class PasswordCommand extends Command
 {
@@ -12,7 +14,7 @@ class PasswordCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'citoyen:search {uid}';
+    protected $signature = 'citoyen:password {uid} {password}';
 
     /**
      * The console command description.
@@ -32,27 +34,38 @@ class PasswordCommand extends Command
     public function handle(): int
     {
         $uid = $this->argument('uid') ?? null;
+        $password = $this->argument('password') ?? null;
 
-        if ($uid) {
-            try {
-                $citizens = $this->ldapCitoyenRepository->search($uid);
-            } catch (\Exception $e) {
-                $citizens = [];
-                $this->error($e->getMessage());
-            }
+        if (!$uid || !$password) {
+            $this->error('Uid et password are required');
 
-            if (count($citizens) === 0) {
-                $this->line('not found '.$uid);
-
-                return \Symfony\Component\Console\Command\Command::FAILURE;
-            }
-
-            $this->line('Found '.count($citizens));
-            foreach ($citizens as $citizen) {
-                $this->line($citizen->getFirstAttribute('mail'));
-            }
+            return \Symfony\Component\Console\Command\Command::FAILURE;
         }
 
-        return \Symfony\Component\Console\Command\Command::SUCCESS;
+        try {
+            $entry = $this->ldapCitoyenRepository->getEntry($uid);
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
+
+            return \Symfony\Component\Console\Command\Command::FAILURE;
+        }
+        if (!$entry) {
+            $this->error('Citizen with uid '.$uid.' not found');
+
+            return \Symfony\Component\Console\Command\Command::FAILURE;
+        }
+
+        try {
+            $this->line('Try change password ');
+            $this->ldapCitoyenRepository->changePassword($entry, $password);
+            $this->info('Password changed, try on https://citoyen.marche.be ');
+
+            return \Symfony\Component\Console\Command\Command::SUCCESS;
+        } catch (\Exception|ModelDoesNotExistException|LdapRecordException $e) {
+            $this->error($e->getMessage());
+
+            return \Symfony\Component\Console\Command\Command::FAILURE;
+        }
+
     }
 }
