@@ -12,7 +12,7 @@ class SearchCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'citoyen:search {uid}';
+    protected $signature = 'citoyen:search {keyword}';
 
     /**
      * The console command description.
@@ -31,7 +31,7 @@ class SearchCommand extends Command
      */
     public function handle(): int
     {
-        $uid = $this->argument('uid') ?? null;
+        $uid = $this->argument('keyword') ?? null;
 
         if ($uid) {
             try {
