@@ -41,7 +41,7 @@ class PasswordCommand extends Command
         $mail = text(
             label: 'Pour quelle adresse email',
             required: true,
-            validate: fn (string $value) => filter_var($value, FILTER_VALIDATE_EMAIL)
+            validate: fn(string $value) => filter_var($value, FILTER_VALIDATE_EMAIL)
                 ? null
                 : "L'adresse mail n'a pas un format valide"
         );
@@ -53,14 +53,14 @@ class PasswordCommand extends Command
 
             return \Symfony\Component\Console\Command\Command::FAILURE;
         }
-        if (! $entry) {
+        if (!$entry) {
             $this->error('Citizen with email '.$mail.' not found');
 
             return \Symfony\Component\Console\Command\Command::FAILURE;
         }
 
-        $newPassword = password(
-            label: 'Nouveau mot de passe',
+        $newPassword = text(
+            label: 'Nouveau mot de passe pour '.$entry->getFirstAttribute('uid'),
             required: true,
             validate: function (string $value) {
                 $validator = Validator::make(

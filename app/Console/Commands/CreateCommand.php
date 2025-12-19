@@ -46,8 +46,8 @@ class CreateCommand extends Command
             'postalCode' => 'Code postal',
             'l' => 'Localité',
             'mail' => 'Email',
-            'password' => 'Mot de passe',
             'employeeNumber' => 'Numéro national',
+            'password' => 'Mot de passe',
             'description' => 'Description',
         ];
 
@@ -89,16 +89,17 @@ class CreateCommand extends Command
         );
         $emailDto->mail = $mail;
 
-        $password = password(
-            label: $labels['password'],
-            required: true
-        );
-        $emailDto->userPassword = $password;
-
         $emailDto->employeeNumber = text(
             label: $labels['employeeNumber'],
             required: true
         );
+
+        $password = password(
+            label: $labels['password'],
+            required: true
+        );
+
+        $emailDto->userPassword = $password;
 
         $emailDto->description = text(
             label: $labels['description'],
