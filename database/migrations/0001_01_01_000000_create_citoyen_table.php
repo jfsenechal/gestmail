@@ -29,6 +29,14 @@ return new class extends Migration
             $table->string('password');
             $table->timestamps();
         });
+
+        Schema::create('login', function (Blueprint $table) {
+            $table->id();
+            $table->string('username')->unique();
+            $table->date('date_connect');
+            $table->string('protocol');
+            $table->boolean('secure');
+        });
     }
 
     /**
