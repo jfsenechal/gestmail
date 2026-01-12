@@ -10,6 +10,7 @@ use LdapRecord\LdapRecordException;
 
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\info;
+use function Laravel\Prompts\text;
 use function Laravel\Prompts\warning;
 
 class PurgeCommand extends Command
@@ -19,7 +20,7 @@ class PurgeCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'citoyen:purge {--cutoff-date=2023-12-31 : Date limite de connexion}';
+    protected $signature = 'citoyen:purge';
 
     /**
      * The console command description.
@@ -38,7 +39,20 @@ class PurgeCommand extends Command
      */
     public function handle(): int
     {
-        $cutoffDate = $this->option('cutoff-date');
+        $cutoffDate = text(
+            label: 'Date limite de connexion (les comptes non connectés depuis cette date seront proposés à la suppression)',
+            placeholder: '2023-12-31',
+            required: true,
+            validate: function (string $value) {
+                $date = \DateTime::createFromFormat('Y-m-d', $value);
+                if (! $date || $date->format('Y-m-d') !== $value) {
+                    return 'Le format de date doit être AAAA-MM-JJ (exemple: 2023-12-31)';
+                }
+
+                return null;
+            },
+            hint: 'Format: AAAA-MM-JJ (exemple: 2023-12-31)'
+        );
 
         try {
             $citizens = $this->ldapCitoyenRepository->getAll();
