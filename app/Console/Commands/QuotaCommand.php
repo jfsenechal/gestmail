@@ -23,7 +23,7 @@ class QuotaCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Change le quota du compte citoyen';
 
     public function __construct(private readonly LdapCitoyenRepository $ldapCitoyenRepository)
     {
