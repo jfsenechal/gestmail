@@ -44,13 +44,13 @@ class DeleteCommand extends Command
         } catch (\Exception $e) {
             $this->error($e->getMessage());
 
-            return \Symfony\Component\Console\Command\Command::FAILURE;
+            return self::FAILURE;
         }
 
         if (!$citizen) {
             $this->error('Citizen with uid '.$uid.' not found');
 
-            return \Symfony\Component\Console\Command\Command::FAILURE;
+            return self::FAILURE;
         }
 
         $email = $citizen->getFirstAttribute('mail');
@@ -68,7 +68,7 @@ class DeleteCommand extends Command
         if (!$confirmed) {
             $this->info('Suppression annulée.');
 
-            return \Symfony\Component\Console\Command\Command::SUCCESS;
+            return self::SUCCESS;
         }
 
         try {
@@ -86,9 +86,9 @@ class DeleteCommand extends Command
             }
             $this->error("L'erreur suivante est survenue : $error");
 
-            return \Symfony\Component\Console\Command\Command::FAILURE;
+            return self::FAILURE;
         }
 
-        return \Symfony\Component\Console\Command\Command::SUCCESS;
+        return self::SUCCESS;
     }
 }
