@@ -15,6 +15,11 @@ class LoginRepository
         return Login::all();
     }
 
+    public function findByUsername(string $username): ?Login
+    {
+        return Login::query()->where('username', $username)->first();
+    }
+
     public function delete(Login $login): void
     {
         $login->delete();
