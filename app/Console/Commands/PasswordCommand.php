@@ -26,7 +26,7 @@ class PasswordCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Change le mot de passe du compte citoyen';
 
     public function __construct(private readonly LdapCitoyenRepository $ldapCitoyenRepository)
     {

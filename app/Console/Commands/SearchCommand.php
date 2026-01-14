@@ -19,7 +19,7 @@ class SearchCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Recherche un compte citoyen suivant le mot clef';
 
     public function __construct(private readonly LdapCitoyenRepository $ldapCitoyenRepository)
     {
