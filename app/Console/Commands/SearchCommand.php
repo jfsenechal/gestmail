@@ -60,7 +60,7 @@ class SearchCommand extends Command
                 if ($login) {
                     $this->line("{$mail} (dernière connexion : {$login->date_connect->format('d/m/Y')})");
                 } else {
-                    $this->line($mail);
+                    $this->line("{$mail} (pas de dernière connexion trouvée");
                 }
             }
         }
