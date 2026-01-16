@@ -1,9 +1,9 @@
 <?php
 
-  return [
-      'citoyen' => [
-          'host' => env('LDAP_CITOYEN_URL'),
-          'user' => env('LDAP_CITOYEN_ADMIN'),
-          'password' => env('LDAP_CITOYEN_PWD'),
-      ],
-  ];
+return [
+    'citoyen' => [
+        'host' => env('IMAP_CITOYEN_HOST', env('LDAP_CITOYEN_URL')),
+        'user' => env('IMAP_CITOYEN_USER'),
+        'password' => env('IMAP_CITOYEN_PWD'),
+    ],
+];
