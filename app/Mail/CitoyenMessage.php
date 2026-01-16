@@ -20,8 +20,8 @@ class CitoyenMessage extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'mail.text.html',
-            text: 'mail.text.txt',
+            view: 'mail.html',
+            text: 'mail.txt',
         );
     }
 

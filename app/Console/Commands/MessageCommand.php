@@ -53,7 +53,7 @@ class MessageCommand extends Command
         // Show preview
         $this->info('Aperçu du message (version texte):');
         $this->line('─────────────────────────────────────────');
-        $this->line(view('mail.text.txt')->render());
+        $this->line(view('mail.txt')->render());
         $this->line('─────────────────────────────────────────');
         $this->newLine();
 
