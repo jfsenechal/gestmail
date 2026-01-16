@@ -55,12 +55,15 @@ class SearchCommand extends Command
             foreach ($citizens as $citizen) {
                 $username = $citizen->getFirstAttribute('uid');
                 $mail = $citizen->getFirstAttribute('mail');
+                $quota = $citizen->getFirstAttribute('gosaMailQuota');
                 $login = $this->loginRepository->findByUsername($username);
 
+                $quotaDisplay = $quota ? "quota: {$quota} Mo" : 'quota: non défini';
+
                 if ($login) {
-                    $this->line("{$mail} (dernière connexion : {$login->date_connect->format('d/m/Y')})");
+                    $this->line("{$mail} ({$quotaDisplay}, dernière connexion : {$login->date_connect->format('d/m/Y')})");
                 } else {
-                    $this->line("{$mail} (pas de dernière connexion trouvée)");
+                    $this->line("{$mail} ({$quotaDisplay}, pas de dernière connexion trouvée)");
                 }
             }
         }
