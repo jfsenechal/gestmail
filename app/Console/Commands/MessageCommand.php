@@ -71,7 +71,7 @@ class MessageCommand extends Command
         $failed = 0;
 
         foreach ($emails as $email) {
-            $email = "jf@marche.be";
+            //$email = "jf@marche.be";
             try {
                 Mail::to($email)->send(new CitoyenMessage);
                 $sent++;
