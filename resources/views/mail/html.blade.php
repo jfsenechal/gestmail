@@ -67,6 +67,7 @@
 
         <div class="footer">
             <p>L'équipe informatique de la Ville de Marche-en-Famenne.</p>
+            <p>Marche-en-Famenne. Rue Victor Libert,36 J. Tél: 084 32 70 54</p>
         </div>
     </div>
 </body>
