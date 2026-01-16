@@ -72,8 +72,8 @@ class SearchCommand extends Command
                     $quotaInfo = $imapCitoyen->getQuota($username);
                     $usageMo = round($quotaInfo['usage'] / 1024, 2);
                     $quotaDisplay = "usage: $usageMo Mo / $quota Mo ({$quotaInfo['pourcentage']}%)";
-                } catch (\Exception) {
-                    // IMAP quota unavailable, use LDAP quota only
+                } catch (\Exception $e) {
+                    $this->error('Can\'t get quota for '.$username.'.'.$e->getMessage());
                 }
 
                 if ($login) {
