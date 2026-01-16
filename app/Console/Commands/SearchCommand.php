@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Imap\ImapCitoyen;
 use App\Ldap\LdapCitoyenRepository;
 use App\Repository\LoginRepository;
 use Illuminate\Console\Command;
@@ -52,18 +53,33 @@ class SearchCommand extends Command
             }
 
             $this->line('Found '.count($citizens));
+
+            $imapCitoyen = new ImapCitoyen(
+                config('imap.citoyen.host'),
+                config('imap.citoyen.user'),
+                config('imap.citoyen.password')
+            );
+
             foreach ($citizens as $citizen) {
                 $username = $citizen->getFirstAttribute('uid');
                 $mail = $citizen->getFirstAttribute('mail');
                 $quota = $citizen->getFirstAttribute('gosaMailQuota');
                 $login = $this->loginRepository->findByUsername($username);
 
-                $quotaDisplay = $quota ? "quota: {$quota} Mo" : 'quota: non défini';
+                $quotaDisplay = $quota ? "quota: $quota Mo" : 'quota: non défini';
+
+                try {
+                    $quotaInfo = $imapCitoyen->getQuota($username);
+                    $usageMo = round($quotaInfo['usage'] / 1024, 2);
+                    $quotaDisplay = "usage: $usageMo Mo / $quota Mo ({$quotaInfo['pourcentage']}%)";
+                } catch (\Exception) {
+                    // IMAP quota unavailable, use LDAP quota only
+                }
 
                 if ($login) {
-                    $this->line("{$mail} ({$quotaDisplay}, dernière connexion : {$login->date_connect->format('d/m/Y')})");
+                    $this->line("$mail ($quotaDisplay, dernière connexion : {$login->date_connect->format('d/m/Y')})");
                 } else {
-                    $this->line("{$mail} ({$quotaDisplay}, pas de dernière connexion trouvée)");
+                    $this->line("$mail ($quotaDisplay, pas de dernière connexion trouvée)");
                 }
             }
         }
