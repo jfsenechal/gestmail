@@ -8,7 +8,7 @@ use Illuminate\Mail\Mailables\Envelope;
 
 class CitoyenMessage extends Mailable
 {
-    public function __construct(public $subject = 'Information importante - Ville de Marche-en-Famenne') {}
+    public function __construct(public $subject = 'RAPPEL : Information importante - Ville de Marche-en-Famenne') {}
 
     public function envelope(): Envelope
     {
